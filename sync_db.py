@@ -1,8 +1,9 @@
-import sqlite3
+# import sqlite3
 from web3.auto import Web3 as Web3_auto
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 import json
+from db import *
 
 with open('cc_token.abi', 'r') as fi:
     cc_abi = json.load(fi)
@@ -11,21 +12,11 @@ with open('cow_park_swap.abi', 'r') as fi:
     cc_swap = json.load(fi)
 
 w3_auto = Web3_auto(Web3_auto.HTTPProvider('https://bsc-dataseed.binance.org/'))
-conn = sqlite3.connect('cc_action.db', check_same_thread=False)
+# conn = sqlite3.connect('cc_action.db', check_same_thread=False)
 w3 = Web3(Web3.HTTPProvider('https://bsc-dataseed.binance.org/'))
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 cc_contract = w3.eth.contract(Web3.toChecksumAddress('0x982de39fb553c7b4399940a811c6078a87d4efba'), abi=cc_abi)
 cc_swap = w3.eth.contract(Web3.toChecksumAddress('0xaF345d7e61257Ab4682dd7371f4B2711f1B3a945'), abi=cc_swap)
-
-
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
-
-conn.row_factory = dict_factory
 
 
 def decode_address(address):
@@ -36,99 +27,23 @@ def encode_address(address):
     return address.replace("0x", "0x000000000000000000000000")
 
 
-def save_cc_logs(block_number, tx_hash, log_index, cc_in, cc_out, bnb_in, bnb_out, user_address, contract_address, tag):
-    cur = conn.cursor()
-    txt = f' INSERT INTO cc_logs (block_number, tx_hash, log_index, ' \
-          f' cc_in, cc_out, bnb_in, bnb_out, user_address, contract_address, tag) VALUES ' \
-          f' ({block_number}, "{tx_hash}", {log_index}, "{cc_in}", "{cc_out}", "{bnb_in}", "{bnb_out}", ' \
-          f' "{user_address}", "{contract_address}", "{tag}")'
-    print(txt)
-    cur.execute(txt)
-    conn.commit()
-    cur.close()
-
-
-def save_w_address(address, name, bnb, cc):
-    cur = conn.cursor()
-    txt = f' INSERT INTO w_address (address, name, bnb, ' \
-          f' cc ) VALUES ({address}, "{name}", {bnb}, "{cc}")'
-    print(txt)
-    cur.execute(txt)
-    conn.commit()
-    cur.close()
-
-
-def update_w_address(address, bnb, cc):
-    cur = conn.cursor()
-    txt = f' UPDATE w_address set bnb = "{bnb}", cc = "{cc}" where address = "{address}" '
-    print(txt)
-    cur.execute(txt)
-    conn.commit()
-    cur.close()
-
-
-def get_cc_log():
-    cur = conn.cursor()
-    txt = 'select * from cc_logs'
-    cur.execute(txt)
-    return cur.fetchall()
-
-
-def get_w_address():
-    cur = conn.cursor()
-    txt = 'select * from w_address'
-    cur.execute(txt)
-    return cur.fetchall()
-
-
-def get_c_address():
-    cur = conn.cursor()
-    txt = 'select * from c_address'
-    cur.execute(txt)
-    return cur.fetchall()
-
-
-def delete_w_address(c_id):
-    cur = conn.cursor()
-    txt = f'delete from w_address where id = {c_id}'
-    cur.execute(txt)
-    return cur.fetchall()
-
-
-# tag : pre_sale, pancake, bind_box, recycle
-def get_contract():
-    cur = conn.cursor()
-    txt = 'select * from c_address'
-    cur.execute(txt)
-    my_contracts = cur.fetchall()
-    return my_contracts
-
-
-def update_contract_block(address_id, latest_block):
-    cur = conn.cursor()
-    txt = f'update c_address set latest_block = "{latest_block}" where id = {address_id}'
-    cur.execute(txt)
-    conn.commit()
-    cur.close()
-
-
 def sync_db_by_contract():
     contracts = get_contract()
     latest_block = w3.eth.get_block('latest')
     for contract in contracts:
         tag = contract['tag']
         if tag == 'pre_sale':
-            sync_pre_sale(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            sync_pre_sale(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'pancake':
-            sync_cc_pancake(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            sync_cc_pancake(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'bind_box':
-            sync_bind_box(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            sync_bind_box(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'recycle':
-            sync_cc_recycle(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            sync_cc_recycle(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'random_cow':
-            sync_random_cow(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            sync_random_cow(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'transfer':
-            transfer(contract, contract['latest_block'] + 1, latest_block['number'], 1000)
+            transfer(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
 
 
 def sync_db_by_wallet():
