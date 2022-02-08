@@ -15,10 +15,10 @@ tag = False
 #     return obj.__dict__
 
 
-# @route_bp.route("/hello", methods=["GET"])
-# def hello():
-#     # print(json.loads(str(get_cc_logs_a())))
-#     return json.dumps(get_cccc_address())
+@route_bp.route("/hello", methods=["GET"])
+def hello():
+    is_connected()
+    return "success"
 
 
 def get_block_by_ts(ts):

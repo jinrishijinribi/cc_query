@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint
 from flask_cors import CORS
-# from models import db
+
 
 route_bp = Blueprint("route", __name__, url_prefix='/api')
 

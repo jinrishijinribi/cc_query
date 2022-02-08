@@ -10,6 +10,10 @@ conn = pymysql.connect(
 )
 
 
+def is_connected():
+    print(conn.ping())
+
+
 # cursor = connection.cursor()
 def save_w_address(address, name, bnb, cc):
     cur = conn.cursor(pymysql.cursors.DictCursor)
