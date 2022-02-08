@@ -1,4 +1,4 @@
-from __init__ import create_app
+from cc_query.__init__ import create_app
 
 app = create_app()
 

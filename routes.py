@@ -1,8 +1,8 @@
-from __init__ import route_bp
+from cc_query.__init__ import route_bp
 from flask import request
-from sync_db import *
+from cc_query.sync_db import *
 # from stat_db import *
-from db import *
+from cc_query.db import *
 import json
 import time
 import datetime
