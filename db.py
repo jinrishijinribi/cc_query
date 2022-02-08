@@ -16,6 +16,7 @@ def is_connected():
 
 # cursor = connection.cursor()
 def save_w_address(address, name, bnb, cc):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' INSERT INTO w_address (address, name, bnb, ' \
           f' cc ) VALUES ("{address}", "{name}", {bnb}, "{cc}")'
@@ -26,6 +27,7 @@ def save_w_address(address, name, bnb, cc):
 
 
 def save_c_address(address, name, tag, latest_block):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' INSERT INTO c_address (address, name, tag, latest_block ' \
           f' ) VALUES ("{address}", "{name}", "{tag}", {latest_block})'
@@ -36,6 +38,7 @@ def save_c_address(address, name, tag, latest_block):
 
 
 def del_c_address(w_id):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''delete from c_address where id = {w_id}'''
     print(txt)
@@ -45,6 +48,7 @@ def del_c_address(w_id):
 
 
 def del_w_address(w_id):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''delete from w_address where id = {w_id}'''
     print(txt)
@@ -54,6 +58,7 @@ def del_w_address(w_id):
 
 
 def save_cc_manual_logs(create_time, bnb_in, bnb_out, cc_in, cc_out, note):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''INSERT INTO cc_manual_logs (create_time, bnb_in, bnb_out, cc_in, cc_out, note) 
             VALUES ("{create_time}", "{bnb_in}", "{bnb_out}", "{cc_in}", "{cc_out}", "{note}")'''
@@ -64,6 +69,7 @@ def save_cc_manual_logs(create_time, bnb_in, bnb_out, cc_in, cc_out, note):
 
 
 def del_cc_manual_logs(c_id):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''delete from cc_manual_logs where id = {c_id}'''
     print(txt)
@@ -73,6 +79,7 @@ def del_cc_manual_logs(c_id):
 
 
 def get_cc_manual_logs():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select * from cc_manual_logs'
     cur.execute(txt)
@@ -80,6 +87,7 @@ def get_cc_manual_logs():
 
 
 def get_charge_bnb_cc():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select sum(bnb_in) as bnb_in, sum(cc_out) as cc_out from cc_manual_logs'
     cur.execute(txt)
@@ -87,6 +95,7 @@ def get_charge_bnb_cc():
 
 
 def get_my_bnb_cc():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select sum(bnb) as bnb, sum(cc) as cc from w_address'
     cur.execute(txt)
@@ -94,6 +103,7 @@ def get_my_bnb_cc():
 
 
 def get_cc_logs_by_address(block_from, block_to):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''select user_address, sum(cc_in) as cc_in, sum(cc_out) as cc_out, sum(bnb_in) as bnb_in, sum(bnb_out) as bnb_out ''' \
           f''' from cc_logs where block_number >= {block_from} and block_number < {block_to} group by user_address  '''
@@ -102,6 +112,7 @@ def get_cc_logs_by_address(block_from, block_to):
 
 
 def get_cc_logs_by_block(block_from, block_to):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'select * from cc_logs where block_number >= {block_from} and block_number < {block_to}'
     cur.execute(txt)
@@ -123,6 +134,7 @@ def get_cc_logs_by_block(block_from, block_to):
 #     cur.close()
 
 def save_cc_logs(block_number, tx_hash, log_index, cc_in, cc_out, bnb_in, bnb_out, user_address, contract_address, tag):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' INSERT INTO cc_logs (block_number, tx_hash, log_index, ' \
           f' cc_in, cc_out, bnb_in, bnb_out, user_address, contract_address, tag) VALUES ' \
@@ -135,6 +147,7 @@ def save_cc_logs(block_number, tx_hash, log_index, cc_in, cc_out, bnb_in, bnb_ou
 
 
 def save_w_address(address, name, bnb, cc):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' INSERT INTO w_address (address, name, bnb, ' \
           f' cc ) VALUES ({address}, "{name}", {bnb}, "{cc}")'
@@ -145,6 +158,7 @@ def save_w_address(address, name, bnb, cc):
 
 
 def update_w_address(address, bnb, cc):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' UPDATE w_address set bnb = "{bnb}", cc = "{cc}" where address = "{address}" '
     print(txt)
@@ -154,6 +168,7 @@ def update_w_address(address, bnb, cc):
 
 
 def get_cc_log():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select * from cc_logs'
     cur.execute(txt)
@@ -161,6 +176,7 @@ def get_cc_log():
 
 
 def get_w_address():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select * from w_address'
     cur.execute(txt)
@@ -168,6 +184,7 @@ def get_w_address():
 
 
 def get_c_address():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select * from c_address'
     cur.execute(txt)
@@ -175,6 +192,7 @@ def get_c_address():
 
 
 def delete_w_address(c_id):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'delete from w_address where id = {c_id}'
     cur.execute(txt)
@@ -183,6 +201,7 @@ def delete_w_address(c_id):
 
 # tag : pre_sale, pancake, bind_box, recycle
 def get_contract():
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = 'select * from c_address'
     cur.execute(txt)
@@ -191,6 +210,7 @@ def get_contract():
 
 
 def update_contract_block(address_id, latest_block):
+    conn.ping()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'update c_address set latest_block = "{latest_block}" where id = {address_id}'
     cur.execute(txt)
