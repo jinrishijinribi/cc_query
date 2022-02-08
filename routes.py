@@ -1,8 +1,8 @@
-from cc_query.__init__ import route_bp
+from __init__ import route_bp
 from flask import request
-from cc_query.sync_db import *
+from sync_db import *
 # from stat_db import *
-from cc_query.db import *
+from db import *
 import json
 import time
 import datetime
@@ -15,10 +15,10 @@ tag = False
 #     return obj.__dict__
 
 
-@route_bp.route("/hello", methods=["GET"])
-def hello():
-    is_connected()
-    return "success"
+# @route_bp.route("/hello", methods=["GET"])
+# def hello():
+#     is_connected()
+#     return "success"
 
 
 def get_block_by_ts(ts):

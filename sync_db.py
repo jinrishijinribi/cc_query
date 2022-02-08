@@ -3,7 +3,7 @@ from web3.auto import Web3 as Web3_auto
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 import json
-from cc_query.db import *
+from db import *
 
 with open('cc_token.abi', 'r') as fi:
     cc_abi = json.load(fi)
