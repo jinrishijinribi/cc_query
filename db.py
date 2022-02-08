@@ -100,7 +100,7 @@ def get_cc_manual_logs():
 def get_charge_bnb_cc():
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    txt = 'select sum(bnb_in) as bnb_in, sum(cc_out) as cc_out from cc_manual_logs'
+    txt = 'select COALESCE(sum(bnb_in),0) as bnb_in, COALESCE(sum(cc_out),0) as cc_out from cc_manual_logs'
     cur.execute(txt)
     return cur.fetchall()
 
@@ -108,7 +108,7 @@ def get_charge_bnb_cc():
 def get_my_bnb_cc():
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    txt = 'select sum(bnb) as bnb, sum(cc) as cc from w_address'
+    txt = 'select COALESCE(sum(bnb),0) as bnb, COALESCE(sum(cc),0) as cc from w_address'
     cur.execute(txt)
     return cur.fetchall()
 

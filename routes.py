@@ -159,8 +159,8 @@ def index_stat():
     print(block_24h, block_now)
     manual_charge_result = get_charge_bnb_cc()[0]
     # 1
-    charge_bnb = manual_charge_result['bnb_in']
-    release_cc = manual_charge_result['cc_out']
+    charge_bnb = int(manual_charge_result['bnb_in'])
+    release_cc = int(manual_charge_result['cc_out'])
 
     # my_bnb_cc = get_my_bnb_cc()[0]
     # my_bnb = my_bnb_cc()['bnb']
