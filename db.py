@@ -100,7 +100,8 @@ def get_cc_manual_logs():
 def get_charge_bnb_cc():
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    txt = 'select COALESCE(sum(bnb_in),0) as bnb_in, COALESCE(sum(cc_out),0) as cc_out from cc_manual_logs'
+    txt = 'select COALESCE(sum(bnb_in),0) as bnb_in, COALESCE(sum(cc_out),0) as cc_out, ' \
+          ' max(create_time) as latest_time from cc_manual_logs'
     cur.execute(txt)
     return cur.fetchall()
 
@@ -116,7 +117,8 @@ def get_my_bnb_cc():
 def get_cc_logs_by_address(block_from, block_to):
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
-    txt = f'''select user_address, sum(cc_in) as cc_in, sum(cc_out) as cc_out, sum(bnb_in) as bnb_in, sum(bnb_out) as bnb_out ''' \
+    txt = f'''select user_address, COALESCE(sum(cc_in), 0) as cc_in, 
+            COALESCE(sum(cc_out),0) as cc_out, COALESCE(sum(bnb_in),0) as bnb_in, COALESCE(sum(bnb_out),0) as bnb_out ''' \
           f''' from cc_logs where block_number >= {block_from} and block_number < {block_to} group by user_address  '''
     cur.execute(txt)
     return cur.fetchall()
@@ -161,7 +163,7 @@ def save_w_address(address, name, bnb, cc):
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f' INSERT INTO w_address (address, name, bnb, ' \
-          f' cc ) VALUES ({address}, "{name}", {bnb}, "{cc}")'
+          f' cc ) VALUES ("{address}", "{name}", {bnb}, "{cc}")'
     print(txt)
     cur.execute(txt)
     conn.commit()

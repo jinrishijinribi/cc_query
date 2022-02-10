@@ -161,6 +161,7 @@ def index_stat():
     # 1
     charge_bnb = int(manual_charge_result['bnb_in'])
     release_cc = int(manual_charge_result['cc_out'])
+    latest_time = manual_charge_result['latest_time']
 
     # my_bnb_cc = get_my_bnb_cc()[0]
     # my_bnb = my_bnb_cc()['bnb']
@@ -192,7 +193,8 @@ def index_stat():
     my_cc_24 = my_wallet_cc - my_cc_in + my_cc_out_24
     # 6
     cc_reserve = cc_swap.functions.getReserves().call()
-    print(cc_reserve)
+    # print(cc_reserve)
+    busd_reserve = busd_swap.functions.getReserves().call()
 
     bnb_all_in = sum(list(map(lambda x: int(x['bnb_in']), cc_logs)))
     bnb_all_out = sum(list(map(lambda x: int(x['bnb_out']), cc_logs)))
@@ -223,8 +225,10 @@ def index_stat():
     individual_cc_in_pure_24 = individual_cc_in_24 - individual_cc_out_24
 
     my_wallet_count = len(my_wallet)
-    all_count = len(cc_logs)
-    all_count_24 = len(cc_logs_24h)
+    # all_count = len(cc_logs)
+    all_count = len(list(filter(lambda x: (x['cc_in'] - x['cc_out']) > 0, cc_logs)))
+    # all_count_24 = len(cc_logs_24h)
+    all_count_24 = len(list(filter(lambda x: (x['cc_in'] - x['cc_out']) > 0, cc_logs_24h)))
     individual_count = all_count - my_wallet_count
     individual_count_24 = all_count_24 - my_wallet_count
     my_cc_in_pure = my_cc_in - my_cc_out
@@ -232,11 +236,13 @@ def index_stat():
     return json.dumps({
         "data": {
             "charge_bnb": charge_bnb,
+            "charge_latest_time": latest_time,
             "my_bnb": my_wallet_bnb,
             "my_bnb_24": my_bnb_24,
             "my_cc": my_wallet_cc,
             "my_cc_24": my_cc_24,
             "cc_price": {"cc": cc_reserve[0], "bnb": cc_reserve[1]},
+            "bnb_price": {"busd": busd_reserve[0], "bnb": busd_reserve[1]},
             # "cc_price_24": 0,
             "individual_bnb_in": individual_bnb_in,
             "individual_bnb_in_24h": individual_bnb_in_24,
@@ -348,6 +354,7 @@ def address_cc():
         address_log = list(filter(lambda x: x["user_address"] in address, address_log))
 
     result = []
+    address_log = sorted(address_log, key=lambda x: x['cc_in'] - x['cc_out'], reverse=True)
 
     for i in address_log[(page - 1) * size: (page - 1) * size + size]:
         # print(i)
@@ -375,6 +382,12 @@ def trade_log():
     latest_block = w3.eth.get_block("latest")
     latest_block_ts = int(latest_block['timestamp'])
     latest_block_number = latest_block['number']
+    if "page" not in data:
+        data.update({"page": 1})
+    if "size" not in data:
+        data.update({"size": 10})
+    page = data['page']
+    size = data['size']
     print(end, latest_block_ts)
     end = min(end, latest_block_ts)
 
@@ -457,7 +470,9 @@ def trade_log():
         seller_cc_out += int(i['cc_out'])
 
     return json.dumps(
-        {"result": result_out, "buy_list": buy_list_out, "sell_list": sell_list_out,
+        {"result": result_out[(page - 1) * size: (page - 1) * size + size],
+         "buy_list": buy_list_out[(page - 1) * size: (page - 1) * size + size],
+         "sell_list": sell_list_out[(page - 1) * size: (page - 1) * size + size],
          "buyer_cc_in": str(Web3.fromWei(buyer_cc_in, "Ether")),
          "buyer_bnb_out": str(Web3.fromWei(buyer_bnb_out, "Ether")),
          "seller_bnb_in": str(Web3.fromWei(seller_bnb_in, "Ether")),

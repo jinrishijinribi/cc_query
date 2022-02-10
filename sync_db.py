@@ -9,14 +9,15 @@ with open('cc_token.abi', 'r') as fi:
     cc_abi = json.load(fi)
 
 with open('cow_park_swap.abi', 'r') as fi:
-    cc_swap = json.load(fi)
+    cc_swap_abi = json.load(fi)
 
 w3_auto = Web3_auto(Web3_auto.HTTPProvider('https://bsc-dataseed.binance.org/'))
 # conn = sqlite3.connect('cc_action.db', check_same_thread=False)
 w3 = Web3(Web3.HTTPProvider('https://bsc-dataseed.binance.org/'))
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 cc_contract = w3.eth.contract(Web3.toChecksumAddress('0x982de39fb553c7b4399940a811c6078a87d4efba'), abi=cc_abi)
-cc_swap = w3.eth.contract(Web3.toChecksumAddress('0xaF345d7e61257Ab4682dd7371f4B2711f1B3a945'), abi=cc_swap)
+cc_swap = w3.eth.contract(Web3.toChecksumAddress('0xaF345d7e61257Ab4682dd7371f4B2711f1B3a945'), abi=cc_swap_abi)
+busd_swap = w3.eth.contract(Web3.toChecksumAddress('0x58f876857a02d6762e0101bb5c46a8c1ed44dc16'), abi=cc_swap_abi)
 
 
 def decode_address(address):
