@@ -115,6 +115,7 @@ def get_my_bnb_cc():
 
 
 def get_cc_logs_by_address(block_from, block_to):
+    # print(block_to, block_from)
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)
     txt = f'''select user_address, COALESCE(sum(cc_in), 0) as cc_in, 

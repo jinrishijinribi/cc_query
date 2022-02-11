@@ -32,6 +32,8 @@ def sync_db_by_contract():
     contracts = get_contract()
     latest_block = w3.eth.get_block('latest')
     for contract in contracts:
+        if contract['status'] != 'enable':
+            continue
         tag = contract['tag']
         if tag == 'pre_sale':
             sync_pre_sale(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)

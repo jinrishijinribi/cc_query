@@ -471,8 +471,11 @@ def trade_log():
 
     return json.dumps(
         {"result": result_out[(page - 1) * size: (page - 1) * size + size],
+         "result_size": len(result_out),
          "buy_list": buy_list_out[(page - 1) * size: (page - 1) * size + size],
+         "buy_list_size": len(buy_list),
          "sell_list": sell_list_out[(page - 1) * size: (page - 1) * size + size],
+         "sell_list_size": len(sell_list),
          "buyer_cc_in": str(Web3.fromWei(buyer_cc_in, "Ether")),
          "buyer_bnb_out": str(Web3.fromWei(buyer_bnb_out, "Ether")),
          "seller_bnb_in": str(Web3.fromWei(seller_bnb_in, "Ether")),
