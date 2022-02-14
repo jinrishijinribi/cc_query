@@ -21,12 +21,17 @@ tag = False
 #     return "success"
 
 
+# def get_block_by_ts(ts):
+#     r = requests.get('https://api.bscscan.com/api?module=block&action=getblocknobytime&timestamp=' + str(
+#         ts) + '&closest=before&apikey=27238ENGZWP4KGFUAE31KTJAZB5Y6HKPNV').json()
+#     print('bs_result', ts, r)
+#     block = r['result']
+#     return block
+
+
 def get_block_by_ts(ts):
-    r = requests.get('https://api.bscscan.com/api?module=block&action=getblocknobytime&timestamp=' + str(
-        ts) + '&closest=before&apikey=27238ENGZWP4KGFUAE31KTJAZB5Y6HKPNV').json()
-    print('bs_result', ts, r)
-    block = r['result']
-    return block
+    block = w3.eth.get_block("latest")
+    return block['number'] + int((ts - block['timestamp']) / 3)
 
 
 @route_bp.route("/sync/data", methods=['GET'])
@@ -280,8 +285,10 @@ def index_stat():
 @route_bp.route("/index/list", methods=['GET'])
 def index_list():
     result = []
-    today = datetime.date.today().strftime("%Y-%m-%d")
-    today_ts = int(datetime.datetime.strptime(today, "%Y-%m-%d").timestamp())
+    # today = datetime.date.today().strftime("%Y-%m-%d")
+    print(int(time.time()))
+    today_ts = int(time.time()) - int(time.time()) % (3600 * 24)
+    # today_ts = int(datetime.datetime.strptime(today, "%Y-%m-%d").timestamp())
     print(today_ts)
     block_today = int(get_block_by_ts(today_ts))
     for i in range(0, 7):
