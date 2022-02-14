@@ -282,6 +282,7 @@ def index_list():
     result = []
     today = datetime.date.today().strftime("%Y-%m-%d")
     today_ts = int(datetime.datetime.strptime(today, "%Y-%m-%d").timestamp())
+    print(today_ts)
     block_today = int(get_block_by_ts(today_ts))
     for i in range(0, 7):
         print(i)
