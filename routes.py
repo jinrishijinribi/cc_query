@@ -24,6 +24,7 @@ tag = False
 def get_block_by_ts(ts):
     r = requests.get('https://api.bscscan.com/api?module=block&action=getblocknobytime&timestamp=' + str(
         ts) + '&closest=before&apikey=27238ENGZWP4KGFUAE31KTJAZB5Y6HKPNV').json()
+    print(r)
     block = r['result']
     return block
 
