@@ -230,3 +230,21 @@ def update_contract_block(address_id, latest_block):
     cur.execute(txt)
     conn.commit()
     cur.close()
+
+
+def get_config(config_id):
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = f'select * from config where id = "{config_id}"'
+    cur.execute(txt)
+    config = cur.fetchall()
+    return config
+
+
+def update_config(config_id, value):
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = f'update config set value = "{value}" where id = "{config_id}"'
+    cur.execute(txt)
+    conn.commit()
+    cur.close()

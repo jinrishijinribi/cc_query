@@ -36,17 +36,24 @@ def get_block_by_ts(ts):
 
 @route_bp.route("/sync/data", methods=['GET'])
 def sync_data():
-    if tag:
-        return json.dumps(tag)
-    sync_db_by_contract()
-    sync_db_by_wallet()
+    # if tag:
+    #     return json.dumps(tag)
+    config = get_config("contract.sync")
+    contract_sync = int(config[0]['value'])
+    print(contract_sync)
+    if contract_sync > 0:
+        print('sync_data')
+        update_config("contract.sync", 0)
+        sync_db_by_contract()
+        sync_db_by_wallet()
+        update_config("contract.sync", 1)
+        print('sync_data end')
     return "success"
 
-
-@route_bp.route("/sync/data/false", methods=['GET'])
-def sync_data_false():
-    tag = False
-    return json.dumps(tag)
+# @route_bp.route("/sync/data/false", methods=['GET'])
+# def sync_data_false():
+#     tag = False
+#     return json.dumps(tag)
 
 
 # 钱包地址新建
