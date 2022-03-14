@@ -153,6 +153,7 @@ def sync_cc_pancake(address, start, end, step):
     # swap 日志的 的topic code
     print(address['address'], start, end)
     while start < end:
+        # pancake 的 cc 的swap
         f = w3_auto.eth.filter(
             {
                 # 合约的address
@@ -176,10 +177,10 @@ def sync_cc_pancake(address, start, end, step):
             amount1in = int(data[96:128], 16)
             amount0out = int(data[160:192], 16)
             amount1out = int(data[224:256], 16)
-            # 如果是卖cc的单子，就查一下tx,
-            if amount0in > 0 and amount1out > 0:
-                tx_content = w3.eth.get_transaction(tx)
-                change_address = tx_content['from']
+            # 如果是卖cc的单子，就查一下tx, 后来发现不用查cc，swap对于cc来说是单向变动。
+            # if amount0in > 0 and amount1out > 0:
+                # tx_content = w3.eth.get_transaction(tx)
+                # change_address = tx_content['from']
             # save_swap_log(block_number, tx, amount0in, amount0out, amount1in, amount1out, change_address)
             # 这边的in,out 是对于合约而言的，对于用户而言是相反的
             print(amount0in, amount0out, amount1in, amount1out)
