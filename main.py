@@ -25,10 +25,11 @@ class Config(object):
     SCHEDULER_API_ENABLED = True
 
 
+app.config.from_object(Config())
+scheduler = APScheduler()
+scheduler.init_app(app)
+scheduler.start()
+
 if __name__ == '__main__':
-    app.config.from_object(Config())
-    scheduler = APScheduler()
-    scheduler.init_app(app)
-    scheduler.start()
     app.run(use_reloader=False)
 
