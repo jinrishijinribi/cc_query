@@ -11,15 +11,21 @@ class Config(object):
             'id': 'job1',
             'func': 'routes:sync_data',
             'args': (),
-            'trigger': 'interval',
-            'seconds': 600
+            'trigger': 'cron',
+            'day': '*',
+            'hour': '*',
+            'minute': '0,10,20,30,40,50',
+            'second': '0'
         },
         {
             'id': 'job2',
             'func': 'routes:sync_data_wallet',
             'args': (),
-            'trigger': 'interval',
-            'seconds': 3600
+            'trigger': 'cron',
+            'day': '*',
+            'hour': '*',
+            'minute': '0',
+            'second': '0'
         }
     ]
     SCHEDULER_API_ENABLED = True
