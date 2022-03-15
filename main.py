@@ -12,6 +12,13 @@ class Config(object):
             'func': 'routes:sync_data',
             'args': (),
             'trigger': 'interval',
+            'seconds': 600
+        },
+        {
+            'id': 'job2',
+            'func': 'routes:sync_data_wallet',
+            'args': (),
+            'trigger': 'interval',
             'seconds': 3600
         }
     ]

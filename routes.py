@@ -36,8 +36,6 @@ def get_block_by_ts(ts):
 
 @route_bp.route("/sync/data", methods=['GET'])
 def sync_data():
-    # if tag:
-    #     return json.dumps(tag)
     config = get_config("contract.sync")
     contract_sync = int(config[0]['value'])
     print(contract_sync)
@@ -45,9 +43,22 @@ def sync_data():
         print('sync_data')
         update_config("contract.sync", 0)
         sync_db_by_contract()
-        sync_db_by_wallet()
         update_config("contract.sync", 1)
         print('sync_data end')
+    return "success"
+
+
+@route_bp.route("/sync/data/wallet", methods=['GET'])
+def sync_data_wallet():
+    config = get_config("wallet.sync")
+    contract_sync = int(config[0]['value'])
+    print(contract_sync)
+    if contract_sync > 0:
+        print('sync_data_wallet')
+        update_config("wallet.sync", 0)
+        sync_db_by_wallet()
+        update_config("wallet.sync", 1)
+        print('sync_data_wallet end')
     return "success"
 
 # @route_bp.route("/sync/data/false", methods=['GET'])
