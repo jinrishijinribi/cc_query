@@ -43,10 +43,12 @@ def sync_db_by_contract():
             sync_bind_box(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'recycle':
             sync_cc_recycle(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
-        if tag == 'random_cow':
-            sync_random_cow(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
+        # if tag == 'random_cow':
+        #     sync_random_cow(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
         if tag == 'transfer':
             transfer(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
+        if tag == 'random_cow':
+            sync_random_cow2(contract, int(contract['latest_block']) + 1, latest_block['number'], 1000)
 
 
 def sync_db_by_wallet():
@@ -117,6 +119,30 @@ def sync_bind_box(address, start, end, step):
     update_contract_block(address['id'], end)
 
 
+def sync_random_cow2(address, start, end, step):
+    # 盲盒合约的 BindboxCow 事件, 新的盲盒时间，在日志里面有价格
+    print(address['tag'], start, end)
+    while start < end:
+        f = w3_auto.eth.filter(
+            {
+                "address": Web3.toChecksumAddress(address['address']),
+                "fromBlock": start,
+                "toBlock": start + step,
+                "topics": ["0x2eca55fc458a776333d44665209aae2631006db9797f3af6c8d52958f2558a16"]
+            }
+        )
+        logs = f.get_all_entries()
+        for log in logs:
+            tx = Web3.toHex(log['transactionHash'])
+            to_address = decode_address(w3.toHex(log['topics'][2]))
+            logs_data = log['data']
+            cc = int(logs_data[2:][64:128], 16)
+            save_cc_logs(log['blockNumber'], tx, log['logIndex'], 0, cc, 0, 0, to_address, address['address'], address['tag'])
+        start += step
+        update_contract_block(address['id'], start)
+    update_contract_block(address['id'], end)
+
+
 def sync_random_cow(address, start, end, step):
     # 盲盒合约的 BindboxCow 事件, 再从所有日志中获取第一个Transfer事件
     print(address['tag'], start, end)
@@ -178,9 +204,9 @@ def sync_cc_pancake(address, start, end, step):
             amount0out = int(data[160:192], 16)
             amount1out = int(data[224:256], 16)
             # 如果是卖cc的单子，就查一下tx, 后来发现不用查cc，swap对于cc来说是单向变动。
-            # if amount0in > 0 and amount1out > 0:
-                # tx_content = w3.eth.get_transaction(tx)
-                # change_address = tx_content['from']
+            if amount0in > 0 and amount1out > 0:
+                tx_content = w3.eth.get_transaction(tx)
+                change_address = tx_content['from']
             # save_swap_log(block_number, tx, amount0in, amount0out, amount1in, amount1out, change_address)
             # 这边的in,out 是对于合约而言的，对于用户而言是相反的
             print(amount0in, amount0out, amount1in, amount1out)
@@ -200,7 +226,8 @@ def sync_cc_recycle(address, start, end, step):
                 "address": Web3.toChecksumAddress(address['address']),
                 "fromBlock": start,
                 "toBlock": start + step,
-                "topics": ["0x59b221be37f9d90e279ee07ea76d7521f95e6bdb8e6b6ccbc07e905f95331fdd"]
+                "topics": ["0x9d34ba625fd37a3ecdb9356d6cb304f867f08ca6200d6202bc56a9d2627e3216"]
+                # "topics": ["0x59b221be37f9d90e279ee07ea76d7521f95e6bdb8e6b6ccbc07e905f95331fdd"]
             }
         )
         logs = f.get_all_entries()
@@ -208,7 +235,7 @@ def sync_cc_recycle(address, start, end, step):
         for log in logs:
             tx = Web3.toHex(log['transactionHash'])
             log_data = log['data']
-            to_address = decode_address(log_data[0:66])
+            to_address = Web3.toChecksumAddress(decode_address(log_data[0:66]))
             cc = int(log_data[2:][96:128], 16)
             save_cc_logs(log['blockNumber'], tx, log['logIndex'], cc, 0, 0, 0, to_address, address['address'],
                          address['tag'])

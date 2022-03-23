@@ -48,6 +48,12 @@ def sync_data():
     return "success"
 
 
+# @route_bp.route("/sync/data/test", methods=['GET'])
+# def sync_data_test():
+#     sync_db_by_contract()
+#     return "success"
+
+
 @route_bp.route("/sync/data/wallet", methods=['GET'])
 def sync_data_wallet():
     config = get_config("wallet.sync")
