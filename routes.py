@@ -481,7 +481,7 @@ def trade_log():
                      "address_type": swap_log['tag'],
                      'address': swap_log['user_address']}
                 )
-            if int(swap_log['bnb_in']) > 0:
+            if int(swap_log['cc_out']) > 0:
                 sell_list.append(swap_log)
                 sell_list_out.append(
                     {'block': swap_log['block_number'],
