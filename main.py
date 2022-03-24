@@ -26,6 +26,16 @@ class Config(object):
             'hour': '*',
             'minute': '0',
             'second': '0'
+        },
+        {
+            'id': 'job3',
+            'func': 'routes:sync_data_graphql',
+            'args': (),
+            'trigger': 'cron',
+            'day': '*',
+            'hour': '*',
+            'minute': '0,10,20,30,40,50',
+            'second': '0'
         }
     ]
     SCHEDULER_API_ENABLED = True

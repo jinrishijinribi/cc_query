@@ -4,6 +4,7 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 import json
 from db import *
+import requests
 
 with open('cc_token.abi', 'r') as fi:
     cc_abi = json.load(fi)
@@ -26,6 +27,20 @@ def decode_address(address):
 
 def encode_address(address):
     return address.replace("0x", "0x000000000000000000000000")
+
+
+def sync_cc_holder(last_update):
+    query_pay_load = {'query': 'query {cowCoinHolders(first: 1000,where: {lastUpdateAt_gte: '
+                               + last_update
+                               + ' }, orderBy: lastUpdateAt, orderDirection: asc){id, balance, lastUpdateAt}}'}
+    response_query = requests.post('https://api.thegraph.com/subgraphs/name/kiedethohngoesoo6ber/cow-park-bsc',
+                                   data=json.dumps(query_pay_load)).json()
+    data = response_query['data']['cowCoinHolders']
+    print(data)
+    for item in data:
+        save_cc_holder(item['id'], item['balance'], item['lastUpdateAt'])
+        last_update = item['lastUpdateAt']
+    return last_update
 
 
 def sync_db_by_contract():

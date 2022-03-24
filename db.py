@@ -248,3 +248,15 @@ def update_config(config_id, value):
     cur.execute(txt)
     conn.commit()
     cur.close()
+
+
+def save_cc_holder(address, balance, update_time):
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    # txt = f'replace into `cc_holder` (`id`, `balance`, `update_time`) values ("{address}", "{balance}", "{update_time}")'
+    txt = f'insert into `cc_holder` (`id`, `balance`, `update_time`) values ("{address}", "{balance}", "{update_time}")' \
+          f' ON DUPLICATE KEY UPDATE `balance` = "{balance}", `update_time` = "{update_time}" '
+    print(txt)
+    cur.execute(txt)
+    conn.commit()
+    cur.close()

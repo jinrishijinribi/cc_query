@@ -48,10 +48,13 @@ def sync_data():
     return "success"
 
 
-# @route_bp.route("/sync/data/test", methods=['GET'])
-# def sync_data_test():
-#     sync_db_by_contract()
-#     return "success"
+@route_bp.route("/sync/graphql/test", methods=['GET'])
+def sync_data_graphql():
+    config = get_config("graphql.last.update")
+    graphql_update = int(config[0]['value'])
+    last_update = sync_cc_holder(str(graphql_update))
+    update_config("graphql.last.update", last_update)
+    return "success"
 
 
 @route_bp.route("/sync/data/wallet", methods=['GET'])
