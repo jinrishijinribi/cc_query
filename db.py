@@ -260,3 +260,20 @@ def save_cc_holder(address, balance, update_time):
     cur.execute(txt)
     conn.commit()
     cur.close()
+
+
+def get_cc_holder():
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = 'select * from cc_holder where balance > 0 order by balance desc'
+    cur.execute(txt)
+    return cur.fetchall()
+
+
+def add_cc_holder_tag(address, tag):
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = f'update cc_holder set tag = "{tag}" where id = "{address}"'
+    cur.execute(txt)
+    conn.commit()
+    cur.close()

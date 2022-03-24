@@ -1,3 +1,5 @@
+import decimal
+
 from __init__ import route_bp
 from flask import request
 from sync_db import *
@@ -7,7 +9,7 @@ import json
 import time
 import datetime
 import requests
-tag = False
+# tag = False
 # from models.model import *
 
 
@@ -27,6 +29,12 @@ tag = False
 #     print('bs_result', ts, r)
 #     block = r['result']
 #     return block
+
+class DecimalEncode(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            return str(o)
+        super(DecimalEncode, self).default(o)
 
 
 def get_block_by_ts(ts):
@@ -520,3 +528,38 @@ def trade_log():
          "latest_number": latest_block_number
          }
     )
+
+
+# 持有cc详情 tags: maker, lock, blind_box, recycle, presale,
+@route_bp.route("/stat/cc/holder/detail", methods=['POST'])
+def cc_holder_detail():
+    data = request.json
+    tags = data['tags']
+    page = data["page"]
+    size = data["size"]
+    address_list = data['address_list']
+    cc_holder = get_cc_holder()
+    if len(tags) > 0:
+        cc_holder = list(filter(lambda x: x['tag'] in tags, cc_holder))
+    if len(address_list) > 0:
+        cc_holder = list(filter(lambda x: x['id'] in address_list, cc_holder))
+
+    count = len(cc_holder)
+    balance_sum = sum(list(map(lambda x: int(x['balance']), cc_holder)))
+    result = cc_holder[(page - 1) * size: (page - 1) * size + size]
+
+    return json.dumps({
+        "result": json.loads(json.dumps(result, cls=DecimalEncode)),
+        "size": count,
+        "balance_sum": balance_sum,
+    })
+
+
+# 给持有cc的地址增加标签
+@route_bp.route("/cc/holder/tag", methods=['POST'])
+def cc_holder_tag():
+    data = request.json
+    address = data['address']
+    tag = data['tag']
+    add_cc_holder_tag(address, tag)
+    return "success"
