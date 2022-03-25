@@ -542,6 +542,7 @@ def cc_holder_detail():
     if len(tags) > 0:
         cc_holder = list(filter(lambda x: x['tag'] in tags, cc_holder))
     if len(address_list) > 0:
+        address_list = list(map(lambda x: x.lower(), address_list))
         cc_holder = list(filter(lambda x: x['id'] in address_list, cc_holder))
 
     count = len(cc_holder)
@@ -561,7 +562,7 @@ def cc_holder_tag():
     data = request.json
     address = data['address']
     tag = data['tag']
-    add_cc_holder_tag(address, tag)
+    add_cc_holder_tag(address.lower(), tag)
     return "success"
 
 
@@ -569,6 +570,8 @@ def cc_holder_tag():
 def cc_holder_tags():
     data = request.json
     address_list = data['address_list']
+    if len(address_list) > 0:
+        address_list = list(map(lambda x: x.lower(), address_list))
     tag = data['tag']
     for address in address_list:
         add_cc_holder_tag(address, tag)
