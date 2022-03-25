@@ -563,3 +563,13 @@ def cc_holder_tag():
     tag = data['tag']
     add_cc_holder_tag(address, tag)
     return "success"
+
+
+@route_bp.route("/cc/holder/tags", methods=['POST'])
+def cc_holder_tags():
+    data = request.json
+    address_list = data['address_list']
+    tag = data['tag']
+    for address in address_list:
+        add_cc_holder_tag(address, tag)
+    return "success"
