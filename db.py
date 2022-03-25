@@ -270,6 +270,14 @@ def get_cc_holder():
     return cur.fetchall()
 
 
+def get_cc_holder_group_by_tag():
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = 'select sum(balance) as s, tag from cc_holder where balance > 0 group by tag'
+    cur.execute(txt)
+    return cur.fetchall()
+
+
 def add_cc_holder_tag(address, tag):
     conn = get_conn()
     cur = conn.cursor(pymysql.cursors.DictCursor)

@@ -573,3 +573,15 @@ def cc_holder_tags():
     for address in address_list:
         add_cc_holder_tag(address, tag)
     return "success"
+
+
+# maker, lock, blind_box, recycle, presale, operator
+@route_bp.route("/stat/cc/holderbytag", methods=['GET'])
+def stat_cc_holder_tags():
+    result = get_cc_holder_group_by_tag()
+    obj = {
+
+    }
+    for item in result:
+        obj[item['tag']] = int(item['s'])
+    return json.dumps(obj)
