@@ -285,3 +285,13 @@ def add_cc_holder_tag(address, tag):
     cur.execute(txt)
     conn.commit()
     cur.close()
+
+
+def add_cc_holders_tag(address_list, tag):
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    txt = f'update cc_holder set tag = "{tag}" where id in ("{address_list}")'
+    print(txt)
+    cur.execute(txt)
+    conn.commit()
+    cur.close()

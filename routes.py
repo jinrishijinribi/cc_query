@@ -573,8 +573,8 @@ def cc_holder_tags():
     if len(address_list) > 0:
         address_list = list(map(lambda x: x.lower(), address_list))
     tag = data['tag']
-    for address in address_list:
-        add_cc_holder_tag(address, tag)
+    # print(",".join(address_list))
+    add_cc_holders_tag('","'.join(address_list), tag)
     return "success"
 
 
